@@ -1,35 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZarVerse Control Dashboard</title>
     <style>
-        body { background: #0f172a; color: #fff; font-family: sans-serif; padding: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .btn { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .on { background: #22c55e; color: #fff; } .off { background: #ef4444; color: #fff; }
-        .player { display: flex; align-items: center; background: #334155; padding: 10px; border-radius: 10px; margin-top: 10px; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        .card { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #334155; }
+        h2 { color: var(--accent); margin: 0 0 15px 0; font-size: 1.1rem; }
+        .btn { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .on { background: #22c55e; color: white; } .off { background: #ef4444; color: white; }
+        .player-card { display: flex; align-items: center; background: #334155; padding: 12px; border-radius: 15px; margin-top: 10px; }
+        .avatar { width: 55px; height: 55px; border-radius: 12px; margin-right: 15px; border: 2px solid var(--accent); }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>ZarVerse Controls</h2>
-        <button id="espBtn" class="btn" onclick="toggle('esp')">ESP</button>
-        <button id="perfBtn" class="btn" onclick="toggle('perf')">Performance</button>
+        <h2>System Controls</h2>
+        <button id="espBtn" class="btn" onclick="toggle('esp')">ESP: LOADING</button>
+        <button id="perfBtn" class="btn" onclick="toggle('perf')">PERF: LOADING</button>
     </div>
     <div class="card">
         <h2>Live Active Players</h2>
-        <div id="players"></div>
+        <div id="playerList">Loading data...</div>
     </div>
+
     <script>
         async function update() {
-            const data = await (await fetch('/api?action=get-settings')).json();
-            document.getElementById('espBtn').className = 'btn ' + (data.autoEsp ? 'on' : 'off');
-            document.getElementById('perfBtn').className = 'btn ' + (data.performanceMode ? 'on' : 'off');
-            
+            // Update Status Tombol
+            const settings = await (await fetch('/api?action=get-settings')).json();
+            document.getElementById('espBtn').innerText = `ESP: ${settings.autoEsp ? 'ON' : 'OFF'}`;
+            document.getElementById('espBtn').className = `btn ${settings.autoEsp ? 'on' : 'off'}`;
+            document.getElementById('perfBtn').innerText = `PERF: ${settings.performanceMode ? 'ON' : 'OFF'}`;
+            document.getElementById('perfBtn').className = `btn ${settings.performanceMode ? 'on' : 'off'}`;
+
+            // Update List Pemain
             const players = await (await fetch('/api?action=get-players')).json();
-            document.getElementById('players').innerHTML = players.map(p => `
-                <div class="player"><img src="${p.avatarUrl}" width="40" style="border-radius:50%; margin-right:10px;">
-                <div><b>${p.username}</b><br><small>${p.gameName}</small></div></div>`).join('');
+            document.getElementById('playerList').innerHTML = players.length > 0 ? players.map(p => `
+                <div class="player-card">
+                    <img src="${p.avatarUrl}" class="avatar">
+                    <div>
+                        <div style="font-weight:bold">${p.username}</div>
+                        <div style="font-size:0.8rem; color:#94a3b8">📍 ${p.gameName}</div>
+                        <div style="color:#22c55e; font-size:0.75rem;">● Active Now</div>
+                    </div>
+                </div>`).join('') : '<p>No active players.</p>';
         }
         async function toggle(a) { await fetch(`/api?action=toggle-${a}`); update(); }
         setInterval(update, 2000); update();
