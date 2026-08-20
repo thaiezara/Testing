@@ -1,81 +1,27 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZarVerse Store Admin</title>
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-    .container { width: 100%; max-width: 500px; }
-    .card { background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    h2, h3 { color: #38bdf8; margin-top: 0; }
-    .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1rem; transition: 0.2s; }
-    .btn-off { background: #ef4444; color: #fff; }
-    .order-item { background: #334155; padding: 10px; border-radius: 6px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 0.9rem; }
-    .badge { background: #f59e0b; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
-    .badge-success { background: #22c55e; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Panel Control Roblox -->
-    <div class="card">
-      <h2>Roblox Features Control</h2>
-      <p>Status Auto ESP: <strong id="espStatus">OFF</strong></p>
-      <button id="espBtn" class="btn btn-off" onclick="toggleESP()">Turn ON Auto ESP</button>
-    </div>
+<!-- Tambahkan di bawah Panel Control Roblox -->
+<div class="card">
+  <h2>Performance Mode</h2>
+  <p>Status Vulkan/Perf: <strong id="perfStatus">OFF</strong></p>
+  <button id="perfBtn" class="btn btn-off" onclick="togglePerf()">Turn ON Performance</button>
+</div>
 
-    <!-- Panel Monitoring Pesanan Itemku -->
-    <div class="card">
-      <h3>Monitoring Pesanan Itemku</h3>
-      <div id="orderList">
-        <p>Loading pesanan...</p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    async function updateDashboard() {
-      // Fetch Settings
-      const resSettings = await fetch('/api?action=get-settings');
-      const dataSettings = await resSettings.json();
-      
-      const espBtn = document.getElementById('espBtn');
-      const espStatus = document.getElementById('espStatus');
-      
-      if(dataSettings.autoEsp) {
-        espStatus.innerText = 'ON';
-        espStatus.style.color = '#22c55e';
-        espBtn.innerText = 'Turn OFF Auto ESP';
-        espBtn.className = 'btn';
-      } else {
-        espStatus.innerText = 'OFF';
-        espStatus.style.color = '#ef4444';
-        espBtn.innerText = 'Turn ON Auto ESP';
-        espBtn.className = 'btn btn-off';
-      }
-
-      // Fetch Orders
-      const resOrders = await fetch('/api?action=get-orders');
-      const orders = await resOrders.json();
-      let html = '';
-      orders.forEach(o => {
-        const badgeClass = o.status === 'Completed' ? 'badge badge-success' : 'badge';
-        html += `<div class="order-item">
-          <div><strong>${o.buyer}</strong> (${o.item})</div>
-          <div class="${badgeClass}">${o.status}</div>
-        </div>`;
-      });
-      document.getElementById('orderList').innerHTML = html;
-    }
-
-    async function toggleESP() {
-      await fetch('/api?action=toggle-esp');
-      updateDashboard();
-    }
-
+<script>
+  // Tambahkan fungsi fetch/update
+  async function togglePerf() {
+    await fetch('/api?action=toggle-perf');
     updateDashboard();
-    setInterval(updateDashboard, 5000); // Auto refresh tiap 5 detik
-  </script>
-</body>
-</html>
+  }
+
+  // Update di dalam fungsi updateDashboard():
+  const perfBtn = document.getElementById('perfBtn');
+  const perfStatus = document.getElementById('perfStatus');
+  
+  if(dataSettings.performanceMode) {
+    perfStatus.innerText = 'ON';
+    perfBtn.innerText = 'Turn OFF Performance';
+    perfBtn.className = 'btn';
+  } else {
+    perfStatus.innerText = 'OFF';
+    perfBtn.className = 'btn btn-off';
+  }
+</script>
