@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZarVerse Dashboard</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { background: #1e293b; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
+    h2 { color: #38bdf8; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; font-size: 0.9rem; }
+    .status { background: #22c55e; color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: bold; display: inline-block; margin-top: 10px; }
+    button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>ZarVerse Store Admin</h2>
+    <p>Server Jembatan API Itemku & Roblox</p>
+    <div class="status">System Online</div>
+    <button onclick="checkStatus()">Cek Koneksi API</button>
+  </div>
+
+  <script>
+    async function checkStatus() {
+      const res = await fetch('/api');
+      const data = await res.json();
+      alert(data.message);
+    }
+  </script>
+</body>
+</html>
